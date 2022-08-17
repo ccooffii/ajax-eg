@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>learn ajax</title>
+</head>
+
+<body>
+  <h1>AJAX Hello <span id="myName"></span></h1>
+  <p>
+    <button id="getCSS">请求 CSS</button>
+    <button id="getJS">请求 JS</button>
+    <button id="getHTML">请求 HTML</button>
+    <button id="getXML">请求XML</button>
+    <button id="getJSON">请求JSON</button>
+    <button id="getPage">请求下一页</button>
+  </p>
+
+  <div id="xxx">
+    {{page1}}
+  </div>
+</body>
+<script>
+getCSS.onclick = () => {
+    const request = new XMLHttpRequest();
+    request.open("GET", "/style.css"); // readyState = 1
+    request.onreadystatechange = () => {
+        console.log(request.readyState);
+        // 下载完成，但不知道是成功 2xx 还是失败 4xx 5xx
+        if (request.readyState === 4) {
+        if (request.status >= 200 && request.status < 300) {
+            const style = document.createElement("style");
+            style.innerHTML = request.response;
+            document.head.appendChild(style);
+        } else {
+            alert("加载 CSS 失败");
+        }
+        }
+    };
+    request.send(); // readyState = 2
+}
+getJS.onclick = () => {
+    const request = new XMLHttpRequest();
+    request.open("GET","/print3.js");
+    request.onreadystatechange = () => {
+        if(request.readyState === 4) {
+            if (request.status >= 200 && request.status < 300) {
+                const script = document.createElement("script")
+                script.innerHTML = request.response
+                document.body.appendChild(script)
+            }else {
+                alert("ERROR");
+            }
+        }
+    }
+    request.send();
+}
+getHTML.onclick = () => {
+    const request = new XMLHttpRequest();
+    request.open("GET","/red.html");
+    request.onreadystatechange = () => {
+        if(request.readyState === 4) {
+            if (request.status >= 200 && request.status < 300) {
+                const html = document.createElement("html")
+                html.innerHTML = request.response
+                document.body.appendChild(html)
+            }else {
+                alert("ERROR");
+            }
+        }
+    }
+    request.send();
+}
+getXML.onclick= function(){
+    const request = new XMLHttpRequest();
+    request.open("GET","/HelloWorLd.xml")
+    request.onreadystatechange = function () {
+        if(request.readyState == 4){
+            if(request.status >= 200 && request.status < 300) {
+                const xml = document.createElement("xml")
+                xml.innerHTML = request.response
+                document.body.appendChild(xml)
+            }else {
+                alert("ERROR")
+            }
+        }
+    }
+    request.send()
+}
+getJSON.onclick= function(){
+    const request = new XMLHttpRequest();
+    request.open("GET","/Hello.json")
+    request.onreadystatechange = function () {
+        if(request.readyState == 4){
+            if(request.status >= 200 && request.status < 300) {
+                console.log(typeof request.response);
+                console.log(request.response);
+                const bool = JSON.parse(request.response);
+                console.log(typeof bool);
+                console.log(bool);
+            }else {
+                alert("ERROR")
+            }
+        }
+    }
+    request.send()
+}
+let n = 0
+getPage.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("GET", `/page${n+1}`+'.json');
+  request.onreadystatechange = () => {
+    if (request.readyState === 4 && request.status === 200) {
+      const array = JSON.parse(request.response);
+      array.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.id;
+        xxx.appendChild(li);
+      });
+      n+=1
+    }else if(request.readyState === 4 && request.status > 400){
+        alert("已经是最后一页")
+    }
+  };
+  request.send();
+};
+</script>
+</html>
